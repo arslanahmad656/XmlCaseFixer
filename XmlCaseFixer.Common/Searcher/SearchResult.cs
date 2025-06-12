@@ -3,5 +3,6 @@
 public record SearchResult(
     string File,
     uint Line,
-    uint Column
+    uint Column,
+    object? Data
     );

@@ -8,9 +8,11 @@ public static class Helper
 {
     public static async Task Search(
         SearcherSettings settings,
-        Func<XmlElementInfo, Task<bool>> filter,
+        Func<XmlElementInfo, Task<(bool Include, object? Data)>> filter,
         Func<SearchResult, Task> onResultReceived,
         IProgress<SearchProgress>? progress = null,
+        Func<Task>? onSearchStart = null,
+        Func<Task>? onSearchComplete = null,
         Func<Exception, Task>? onFileError = null,
         Func<Exception, Task>? onElementError = null,
         CancellationToken cancellationToken = default)
@@ -21,6 +23,11 @@ public static class Helper
             XmlResolver = null,
             IgnoreWhitespace = true
         };
+
+        if (onSearchStart is not null)
+        {
+            await onSearchStart().ConfigureAwait(false);
+        }
 
         foreach (var file in Directory.EnumerateFiles(settings.RootPath, settings.XmlFilesOnly ? "*.xml" : "*.*", SearchOption.AllDirectories))
         {
@@ -45,11 +52,11 @@ public static class Helper
                         if (reader.NodeType is XmlNodeType.Element)
                         {
                             var attributes = GetElementAttributes(reader);
-                            var include = await filter(new XmlElementInfo(reader.Name, reader.NamespaceURI, new ReadOnlyDictionary<string, string>(attributes))).ConfigureAwait(false);
+                            var filterResult = await filter(new XmlElementInfo(reader.Name, reader.NamespaceURI, new ReadOnlyDictionary<string, string>(attributes))).ConfigureAwait(false);
                             
-                            if (include)
+                            if (filterResult.Include)
                             {
-                                await onResultReceived(new SearchResult(file, (uint)lineInfo.LineNumber, (uint)lineInfo.LinePosition)).ConfigureAwait(false);
+                                await onResultReceived(new (file, (uint)lineInfo.LineNumber, (uint)lineInfo.LinePosition, filterResult.Data)).ConfigureAwait(false);
                             }
                         }
                     }
@@ -77,6 +84,11 @@ public static class Helper
                     await onFileError(new Exception($"Error occurred while searching the file {file}.", ex)).ConfigureAwait(false);
                 }
             }
+        }
+
+        if (onSearchComplete is not null)
+        {
+            await onSearchComplete().ConfigureAwait(false);
         }
     }
 

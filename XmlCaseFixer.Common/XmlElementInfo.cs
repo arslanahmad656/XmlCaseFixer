@@ -6,4 +6,4 @@ public record XmlElementInfo(
     string TagName,
     string Namespace,
     ReadOnlyDictionary<string, string> Attributes
-    );
+    ): XmlElementInfoBase(TagName, Namespace);
