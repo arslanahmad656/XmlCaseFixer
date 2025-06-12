@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlCaseFixer.Common", "XmlC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlCaseFixer.Searcher", "XmlCaseFixer.Searcher\XmlCaseFixer.Searcher.csproj", "{0F03B04F-D602-40DF-8527-BAE77E699572}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearcherTest", "SearcherTest\SearcherTest.csproj", "{90AC6692-44D1-4016-807E-581F2406FE47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0F03B04F-D602-40DF-8527-BAE77E699572}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F03B04F-D602-40DF-8527-BAE77E699572}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F03B04F-D602-40DF-8527-BAE77E699572}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90AC6692-44D1-4016-807E-581F2406FE47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90AC6692-44D1-4016-807E-581F2406FE47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90AC6692-44D1-4016-807E-581F2406FE47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90AC6692-44D1-4016-807E-581F2406FE47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

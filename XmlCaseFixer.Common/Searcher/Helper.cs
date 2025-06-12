@@ -7,7 +7,7 @@ namespace XmlCaseFixer.Common.Searcher;
 public static class Helper
 {
     public static async Task Search(
-        SearcherSettings settings,
+        Settings settings,
         Func<XmlElementInfo, Task<(bool Include, object? Data)>> filter,
         Func<SearchResult, Task> onResultReceived,
         IProgress<SearchProgress>? progress = null,
@@ -21,7 +21,8 @@ public static class Helper
         {
             DtdProcessing = DtdProcessing.Prohibit,
             XmlResolver = null,
-            IgnoreWhitespace = true
+            IgnoreWhitespace = true,
+            Async = true,
         };
 
         if (onSearchStart is not null)
@@ -56,7 +57,7 @@ public static class Helper
                             
                             if (filterResult.Include)
                             {
-                                await onResultReceived(new (file, (uint)lineInfo.LineNumber, (uint)lineInfo.LinePosition, filterResult.Data)).ConfigureAwait(false);
+                                await onResultReceived(new (new Location(file, (uint)lineInfo.LineNumber, (uint)lineInfo.LinePosition), filterResult.Data)).ConfigureAwait(false);
                             }
                         }
                     }
@@ -92,7 +93,59 @@ public static class Helper
         }
     }
 
-    
+    public static Dictionary<string, List<(XmlAttributeInfo Attribute, Location Location)>> FindDuplicates(IEnumerable<SearchResult> searchResults, bool requireCaseDiff)
+    {
+        var lookup = new Dictionary<string, List<(XmlAttributeInfo Attribute, Location Location)>>(StringComparer.InvariantCultureIgnoreCase);
+
+        foreach (var searchResult in searchResults)
+        {
+            if (searchResult.Data is not XmlAttributeInfo attribute)
+            {
+                throw new Exception("Data must be of type XmlAttributeInfo.");
+            }
+
+            if (!lookup.TryGetValue(attribute.AttributeValue, out var list))
+            {
+                list = [];
+                lookup[attribute.AttributeValue] = list;
+            }
+
+            list.Add((attribute, searchResult.Location));
+        }
+
+        var duplicates = new Dictionary<string, List<(XmlAttributeInfo Attribute, Location Location)>>(StringComparer.InvariantCultureIgnoreCase);
+
+        foreach (var pair in lookup)
+        {
+            bool shouldAdd = false;
+            if (!requireCaseDiff)
+            {
+                shouldAdd = pair.Value.Count > 1;
+            }
+            else
+            {
+                var allValues = pair.Value
+                    .Select(v => v.Attribute.AttributeValue)
+                    .Distinct(StringComparer.InvariantCulture);
+                if (!allValues.TryGetNonEnumeratedCount(out int count))
+                {
+                    count = allValues.Count();
+                }
+
+                shouldAdd = count > 1;
+            }
+
+            if (shouldAdd)
+            {
+                duplicates[pair.Key] = pair.Value;
+            }
+        }
+
+        //var duplicates = lookup.Where(x => x.Value.Count > 1).ToDictionary(x => x.Key, x => x.Value, StringComparer.InvariantCultureIgnoreCase);
+
+        return duplicates;
+    }
+
     private static Dictionary<string, string> GetElementAttributes(XmlReader reader)
     {
         var attributes = new Dictionary<string, string>();

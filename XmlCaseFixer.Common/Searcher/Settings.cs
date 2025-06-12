@@ -1,8 +1,9 @@
 ﻿namespace XmlCaseFixer.Common.Searcher;
 
-public record SearcherSettings(
+public record Settings(
     string RootPath,
     bool XmlFilesOnly,
     bool Recursive,
-    bool FineGrainedControl
+    bool FineGrainedControl,
+    bool UniqueOnCaseDiffOnly
     );

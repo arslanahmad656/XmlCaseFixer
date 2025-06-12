@@ -2,7 +2,7 @@
 
 public record SearchProgress(
     string FileName,
-    string AttributeName,
+    string TagName,
     uint LineNumber,
     uint LineColumn
     );

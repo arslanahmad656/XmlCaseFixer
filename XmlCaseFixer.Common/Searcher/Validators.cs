@@ -2,7 +2,7 @@
 
 public static class Validators
 {
-    public static void ValidateSearcherSettings(SearcherSettings settings)
+    public static void ValidateSearcherSettings(Settings settings)
     {
         if (!Directory.Exists(settings.RootPath))
         {

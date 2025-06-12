@@ -9,8 +9,13 @@ public interface ISearcher
     event EventHandler<OperationCanceledException>? SearchCanceled;
     event EventHandler<SearchProgress>? ProgressChanged;
 
-    SearcherSettings Settings { get; }
+    Settings Settings { get; }
     Task Search(string attributeName, CancellationToken cancellationToken);
+    Task Search(string tagName, string attributeName, CancellationToken cancellationToken);
 
     Task<List<SearchResult>> GetSearchResults(string attributeName, CancellationToken cancellationToken);
+    Task<List<SearchResult>> GetSearchResults(string tatgName, string attributeName, CancellationToken cancellationToken);
+
+    Task<Dictionary<string, List<(XmlAttributeInfo Attribute, Location Location)>>> FindDuplicates(string attributeName, CancellationToken cancellationToken);
+    Task<Dictionary<string, List<(XmlAttributeInfo Attribute, Location Location)>>> FindDuplicates(string tagName, string attributeName, CancellationToken cancellationToken);
 }
