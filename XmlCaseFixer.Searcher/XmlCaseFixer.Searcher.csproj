@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\XmlCaseFixer.Common\XmlCaseFixer.Common.csproj" />
+  </ItemGroup>
+
 </Project>
