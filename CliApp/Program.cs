@@ -73,6 +73,12 @@ catch (Exception ex)
 	Console.WriteLine(ex.StackTrace);
 }
 
+Console.WriteLine();
+Console.WriteLine();
+Console.WriteLine();
+Console.WriteLine("Program end. Press any key to exit...");
+Console.ReadKey(true);
+
 void Searcher_ProgressChanged(object? sender, SearchProgress e)
 {
     var fileName = GetLogFileName("progress");
